@@ -1,0 +1,18 @@
+.nav-wrapper {
+	color: #FFF;
+ 	background-color: #252839;
+}
+
+nav ul li.active {
+ 	background-color: #f2b632;
+}
+
+.collapsible-header {
+	color: #FFF;
+ 	background-color: #677077;
+}
+
+.collapsible-body .collapsible-header {
+	color: #FFF;
+ 	background-color: #b5b5b7;
+}

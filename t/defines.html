@@ -1,0 +1,44 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html>
+{{template "stdhead" ""}}{{define "stdhead"}}
+<head>
+  <title>Git Scrutinize{{if .}} - {{.}}{{end}}</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/css/materialize.min.css" rel="stylesheet">
+  <link href="/scrutinize.css" rel="stylesheet">
+
+  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/js/materialize.min.js"></script>
+
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">  
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="favicon-96x96.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="favicon-192x192.png">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+</head>
+{{end}}
+<body>
+{{template "navbar" $}}{{define "navbar"}}
+<header>
+<nav>
+    <div class="nav-wrapper">
+      <a href="/" class="brand-logo right"><img height="100%" src="/favicon-192x192.png"></a>
+      <ul class="left">
+        <li{{if eq "/commits" .path}} class="active"{{end}}><a href="/commits"><i class="material-icons">view_list</i></a></li>
+        <li{{if eq "/tree" .path}}  class="active"{{end}}><a href="/tree"><i class="material-icons">folder</i></a></li>
+        <li{{if eq "/threads" .path}}  class="active"{{end}}><a href="/threads"><i class="material-icons">forum</i></a></li>
+        <li><a class="dropdown-button" data-activates="dropdown1" data-beloworigin="true" data-constrainwidth="false"><i class="material-icons">more_vert</i></a></li>
+      </ul>
+    </div>
+ </nav>
+
+<ul id="dropdown1" class="dropdown-content">
+    <li><a href="/settings"><i class="left material-icons">settings</i>Settings</a></li>
+    <li class=divider></li>
+  <li><a href="/quit"><i class="left material-icons">exit_to_app</i>Quit</a></li>
+</ul>
+</header>
+{{end}}
+</body>
+</html>
