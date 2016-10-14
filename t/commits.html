@@ -4,10 +4,26 @@
 <body>
 {{template "navbar" $}}
 
+<ul class="collapsible" data-collapsible="expandable">
 {{range gitlog}}
-{{.Id}}: {{.Message}}<br>
+ <li>
+      <div class="collapsible-header">{{.Id.String | shortid}} {{.Summary}}</div>
+      <div class="collapsible-body">
+      	<div class="row">
+      		<div class="col s1">Author</div> {{template "sig" .Author}}
+      	</div>
+      	<div class="row">
+   			<div class="col s1">Committer</div> {{template "sig" .Committer}}
+      	<p>{{.Message}}</p>
+      </div>
+    </li>
+    <li>
+<li>
 {{end}}
-
-
+</ul>
+{{define "sig"}}
+	<div class="col s2">{{.Name}} &lt;{{.Email}}&gt</div>
+	<div class="col s2">{{.When | timestamp}}</div>
+{{end}}
 </body>
 </html>

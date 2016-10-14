@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"html/template"
 	"strings"
 	"time"
@@ -21,9 +22,16 @@ var tmplFuncs = template.FuncMap{
 		}
 		return false
 	},
+	"shortid": func(s string) string {
+		if len(s) > 6 {
+			return fmt.Sprintf("%s...", s[:6])
+		}
+		return s
+	},
 	"split":      func(sep, s string) []string { return strings.Split(s, sep) },    // note: reversed args
 	"trimprefix": func(pfx, s string) string { return strings.TrimPrefix(s, pfx) }, // note: reversed args
 	"titlecase":  strings.Title,
 	"git":        func() *git.Repository { return repository },
 	"gitlog":     gitLog,
+	"gitrefs":    gitRefNames,
 }
