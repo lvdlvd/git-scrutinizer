@@ -25,4 +25,5 @@ var tmplFuncs = template.FuncMap{
 	"trimprefix": func(pfx, s string) string { return strings.TrimPrefix(s, pfx) }, // note: reversed args
 	"titlecase":  strings.Title,
 	"git":        func() *git.Repository { return repository },
+	"gitlog":     gitLog,
 }

@@ -12,9 +12,8 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
+	"github.com/libgit2/git2go"
 	"github.com/lvdlvd/go-net-http-tmpl"
-
-	git "github.com/libgit2/git2go"
 )
 
 var (
