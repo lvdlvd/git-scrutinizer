@@ -1,6 +1,10 @@
 package main
 
-import "github.com/libgit2/git2go"
+import (
+	"path"
+
+	git "github.com/libgit2/git2go"
+)
 
 // log of master..HEAD
 func gitLog() ([]*git.Commit, error) {
@@ -34,16 +38,54 @@ func gitRefNames() ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
-	var names []string
+	var ss []string
 	for {
 		n, err := it.Next()
 		if ge, ok := err.(*git.GitError); ok && ge.Code == git.ErrIterOver {
 			break
 		}
 		if err != nil {
-			return names, err
+			return ss, err
 		}
-		names = append(names, n)
+		ss = append(ss, n)
 	}
-	return names, nil
+	return ss, nil
+}
+
+func gitNotes() (map[string]string, error) {
+	head, err := repository.Head()
+	if err != nil {
+		return nil, err
+	}
+	branch, err := head.Branch().Name()
+	if err != nil {
+		return nil, err
+	}
+	it, err := repository.NewNoteIterator(path.Join(*refpfx, branch))
+	if ge, ok := err.(*git.GitError); ok && ge.Code == git.ErrNotFound {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+	ss := map[string]string{}
+	for {
+		noteid, annid, err := it.Next()
+		if ge, ok := err.(*git.GitError); ok && ge.Code == git.ErrIterOver {
+			break
+		}
+		if err != nil {
+			return ss, err
+		}
+		obj, err := repository.Lookup(noteid)
+		if err != nil {
+			return ss, err
+		}
+		b, err := obj.AsBlob()
+		if err != nil {
+			return ss, err
+		}
+		ss[annid.String()] = string(b.Contents())
+	}
+	return ss, nil
 }
