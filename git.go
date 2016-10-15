@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"path"
 
 	git "github.com/libgit2/git2go"
@@ -112,4 +113,29 @@ func gitNotes() (map[string]string, error) {
 		ss[annid.String()] = string(b.Contents())
 	}
 	return ss, nil
+}
+
+func gitNoteAppend(id *git.Oid, msg string) error {
+	head, err := repository.Head()
+	if err != nil {
+		return err
+	}
+	branch, err := head.Branch().Name()
+	if err != nil {
+		return err
+	}
+	ref := path.Join(*refpfx, branch)
+
+	note, err := repository.Notes.Read(ref, id)
+	if err == nil && note != nil {
+		msg = fmt.Sprintf("%s\n%s", note.Message(), msg)
+	}
+
+	sig, err := repository.DefaultSignature()
+	if err != nil {
+		return err
+	}
+
+	_, err = repository.Notes.Create(ref, sig, sig, id, msg, true)
+	return err
 }
