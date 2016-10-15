@@ -31,12 +31,15 @@ var tmplFuncs = template.FuncMap{
 		}
 		return s
 	},
-	"split":      func(sep, s string) []string { return strings.Split(s, sep) },    // note: reversed args
-	"trimprefix": func(pfx, s string) string { return strings.TrimPrefix(s, pfx) }, // note: reversed args
-	"titlecase":  strings.Title,
-	"git":        func() *git.Repository { return repository },
-	"gitlog":     gitLog,
-	"gitrefs":    gitRefNames,
-	"gitnotes":   gitNotes,
-	"gitconfig":  gitConfig,
+	"split":           func(sep, s string) []string { return strings.Split(s, sep) },    // note: reversed args
+	"trimprefix":      func(pfx, s string) string { return strings.TrimPrefix(s, pfx) }, // note: reversed args
+	"titlecase":       strings.Title,
+	"git":             func() *git.Repository { return repository },
+	"gitbranchlocal":  func(name string) (*git.Branch, error) { return repository.LookupBranch(name, git.BranchLocal) },
+	"gitbranchremote": func(name string) (*git.Branch, error) { return repository.LookupBranch(name, git.BranchRemote) },
+	"gitlog":          gitLog,
+	"gitrefs":         gitRefNames,
+	"gitnotes":        gitNotes,
+	"gitconfig":       gitConfig,
+	"gitdiffs":        gitDiffs,
 }

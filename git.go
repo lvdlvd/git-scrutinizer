@@ -139,3 +139,44 @@ func gitNoteAppend(id *git.Oid, msg string) error {
 	_, err = repository.Notes.Create(ref, sig, sig, id, msg, true)
 	return err
 }
+
+func gitDiffs(ocid, ncid *git.Oid) ([]*git.DiffDelta, error) {
+	oc, err := repository.LookupCommit(ocid)
+	if err != nil {
+		return nil, err
+	}
+	otree, err := oc.Tree()
+	if err != nil {
+		return nil, err
+	}
+
+	nc, err := repository.LookupCommit(ncid)
+	if err != nil {
+		return nil, err
+	}
+	ntree, err := nc.Tree()
+	if err != nil {
+		return nil, err
+	}
+	opts, err := git.DefaultDiffOptions()
+	if err != nil {
+		return nil, err
+	}
+	diff, err := repository.DiffTreeToTree(otree, ntree, &opts)
+	if err != nil {
+		return nil, err
+	}
+	N, err := diff.NumDeltas()
+	if err != nil {
+		return nil, err
+	}
+	var r []*git.DiffDelta
+	for i := 0; i < N; i++ {
+		dd, err := diff.GetDelta(i)
+		if err != nil {
+			return nil, err
+		}
+		r = append(r, &dd)
+	}
+	return r, nil
+}

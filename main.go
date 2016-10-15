@@ -90,7 +90,7 @@ func main() {
 
 	r.Path("/commits").Handler(substPath("commits.html", th))
 	r.Path("/tree").Handler(substPath("tree.html", th))
-	r.Path("/threads").Handler(substPath("threads.html", th))
+	r.Path("/diffs").Handler(substPath("diffs.html", th))
 	r.Path("/settings").Handler(substPath("settings.html", th))
 
 	api := r.PathPrefix("/api/v1").Subrouter()

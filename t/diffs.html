@@ -3,5 +3,11 @@
 {{template "stdhead" ($.path | trimprefix "/" | titlecase)}}
 <body>
 {{template "navbar" $}}
+{{range gitdiffs (gitbranchlocal "master").Target git.Head.Target}}
+<pre>
+{{. | printf "%#v"}}
+</pre>
+{{end}}
+
 </body>
 </html>
