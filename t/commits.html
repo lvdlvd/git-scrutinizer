@@ -6,10 +6,11 @@
 
 {{$notes := gitnotes}}
 
+
 <ul class="collapsible" data-collapsible="expandable">
 {{range gitlog}}
  <li>
-      <div class="collapsible-header">{{.Id.String | shortid}} {{.Summary}}</div>
+      <div class="collapsible-header {{if eq .Id.String git.Head.Target.String}}active{{end}}">{{.Id.String | shortid}} {{.Summary}}</div>
       <div class="collapsible-body">
       	<div class="row">
       		<div class="col s1">Author</div> {{template "sig" .Author}}
@@ -25,7 +26,26 @@
 	      	<div class="col s12">{{.}}</div>
       	</div>
 {{end}}
+{{if eq .Id.String git.Head.Target.String}}
+		<div class="row">
+		    <form class="col s12">
+				<div class="row">
+					<div class="input-field col s12">
+						<i class="material-icons prefix">mode_edit</i>
+						<textarea id="textarea1" class="materialize-textarea"></textarea>
+						<label for="textarea1">New Comment</label>
+					</div>
+				</div>
+				<div class="row">
+					<div class="input-field col s2">
+					<button class="btn waves-effect waves-light" type="submit">Submit<i class="material-icons right">send</i>
+					</button>
+					</div>
+				</div>
+			</form>
+		</div>
       </div>
+{{end}}
     </li>
     <li>
 <li>
