@@ -29,10 +29,11 @@
 {{if eq .Id.String git.Head.Target.String}}
 		<div class="row">
 		    <form class="col s12">
+		    	<input type="hidden" name="commit" value="{{.Id}}">
 				<div class="row">
 					<div class="input-field col s12">
 						<i class="material-icons prefix">mode_edit</i>
-						<textarea id="textarea1" class="materialize-textarea"></textarea>
+						<textarea id="textarea1" name="text" class="materialize-textarea"></textarea>
 						<label for="textarea1">New Comment</label>
 					</div>
 				</div>
@@ -55,5 +56,25 @@
 	<div class="col s2">{{.Name}} &lt;{{.Email}}&gt</div>
 	<div class="col s2">{{.When | timestamp}}</div>
 {{end}}
+
+<script>
+$(document).ready(function() {
+    $("form").submit(function(ev){
+        ev.preventDefault();
+        var data = $(this).serializeArray().reduce(function(obj, item) {
+		    obj[item.name] = item.value;
+    		return obj;
+		}, {});
+        $.ajax({
+			type:    'POST',
+			url:     '/api/v1/commits/' + data['commit'] + '/notes',
+			//data:    data['text'],
+			data:    $(this).serializeArray(),
+			success: function(res, status, xhr) { location.reload(); },
+			error:   function(xhr, status, err) { Materialize.toast(xhr.responseText, 4000); }
+        });
+    });
+});
+</script>
 </body>
 </html>

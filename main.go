@@ -14,6 +14,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/lvdlvd/go-net-http-tmpl"
+	"github.com/lvdlvd/go-rest"
 
 	git "github.com/libgit2/git2go"
 )
@@ -91,6 +92,10 @@ func main() {
 	r.Path("/tree").Handler(substPath("tree.html", th))
 	r.Path("/threads").Handler(substPath("threads.html", th))
 	r.Path("/settings").Handler(substPath("settings.html", th))
+
+	api := r.PathPrefix("/api/v1").Subrouter()
+	all := rest.Everyone(rest.All)
+	api.Path("/commits/{commit}/notes").Handler(&rest.Handler{Auth: all, Post: http.HandlerFunc(postNote)})
 
 	exit := make(chan bool)
 	r.Path("/quit").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
