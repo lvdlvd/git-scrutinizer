@@ -6,6 +6,30 @@ import (
 	git "github.com/libgit2/git2go"
 )
 
+func gitConfig() ([]*git.ConfigEntry, error) {
+	cfg, err := repository.Config()
+	if err != nil {
+		return nil, err
+	}
+
+	it, err := cfg.NewIterator()
+	if err != nil {
+		return nil, err
+	}
+	var ss []*git.ConfigEntry
+	for {
+		n, err := it.Next()
+		if ge, ok := err.(*git.GitError); ok && ge.Code == git.ErrIterOver {
+			break
+		}
+		if err != nil {
+			return ss, err
+		}
+		ss = append(ss, n)
+	}
+	return ss, nil
+}
+
 // log of master..HEAD
 func gitLog() ([]*git.Commit, error) {
 	w, err := repository.Walk()

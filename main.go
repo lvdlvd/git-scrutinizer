@@ -90,6 +90,7 @@ func main() {
 	r.Path("/commits").Handler(substPath("commits.html", th))
 	r.Path("/tree").Handler(substPath("tree.html", th))
 	r.Path("/threads").Handler(substPath("threads.html", th))
+	r.Path("/settings").Handler(substPath("settings.html", th))
 
 	exit := make(chan bool)
 	r.Path("/quit").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

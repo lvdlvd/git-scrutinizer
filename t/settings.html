@@ -1,0 +1,44 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html>
+{{template "stdhead" ($.path | trimprefix "/" | titlecase)}}
+<body>
+{{template "navbar" $}}
+
+<div class="row">
+<div class="col s12">
+<table class="highlight">
+	<thead>
+		<tr>
+			<th data-field="name">Name</th>
+			<th data-field="value">Value</th>
+			<th data-field="level">Level</th>
+		</tr>
+	</thead>
+
+	<tbody>
+{{range gitconfig}}
+<tr>
+<td>{{.Name}}</td><td>{{.Value}}</td><td>
+{{if eq 1 .Level}}PROGRAMDATA
+{{else if eq 2 .Level}}SYSTEM (/etc/gitconfig)
+{{else if eq 3 .Level}}XDG (~/.config/git/config)
+{{else if eq 4 .Level}}GLOBAL (~/.gitconfig)
+{{else if eq 5 .Level}}LOCAL ({{git.Path}}/config)
+{{else if eq 6 .Level}}APP
+{{else if eq -1 .Level}}highest available
+{{else}}level {{.Level}}
+{{end}}</td>
+</tr>
+{{end}}
+</tbody>
+</table>
+</div>
+</div>
+<script>
+
+$(document).ready(function() {
+        $('table').DataTable().page.len(200).draw();
+});
+</script>
+</body>
+</html>
