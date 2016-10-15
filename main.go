@@ -9,11 +9,13 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/gorilla/mux"
-	"github.com/libgit2/git2go"
 	"github.com/lvdlvd/go-net-http-tmpl"
+
+	git "github.com/libgit2/git2go"
 )
 
 var (
@@ -77,7 +79,7 @@ func main() {
 	log.Println("Git repository", repository.Path())
 
 	r := mux.NewRouter()
-	r.KeepContext = true
+	r.KeepContext = true // cleared in loghandler
 
 	th := tmpl.NewHandler(filepath.Join(*tmplroot, "*.html"), nil, tmplFuncs)
 
@@ -110,7 +112,7 @@ func main() {
 
 	go (&http.Server{
 		Addr:    fmt.Sprint(ln.Addr()),
-		Handler: logHandler(r, *verbose),
+		Handler: logHandler(onlyOne(r, strings.Split(ln.Addr().String(), ":")[1]), *verbose),
 	}).Serve(tcpKeepAliveListener{ln.(*net.TCPListener)})
 
 	b, err := exec.Command(openCmd, fmt.Sprintf("http://%s", ln.Addr())).CombinedOutput()
