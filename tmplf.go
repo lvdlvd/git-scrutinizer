@@ -9,6 +9,9 @@ import (
 	git "github.com/libgit2/git2go"
 )
 
+// This is the table of functions we want to have available in the html templates.
+// Be sure to add only functions with no side effects here.  To change state,
+// add a handler for a POST method in main.
 var tmplFuncs = template.FuncMap{
 	"timestamp": func(t time.Time) string { return t.UTC().Format(time.RFC3339) },
 	"date":      func(t time.Time) string { return t.UTC().Format("2006-01-02") },
@@ -34,4 +37,5 @@ var tmplFuncs = template.FuncMap{
 	"git":        func() *git.Repository { return repository },
 	"gitlog":     gitLog,
 	"gitrefs":    gitRefNames,
+	"gitnotes":   gitNotes,
 }

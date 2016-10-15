@@ -4,6 +4,8 @@
 <body>
 {{template "navbar" $}}
 
+{{$notes := gitnotes}}
+
 <ul class="collapsible" data-collapsible="expandable">
 {{range gitlog}}
  <li>
@@ -14,7 +16,15 @@
       	</div>
       	<div class="row">
    			<div class="col s1">Committer</div> {{template "sig" .Committer}}
-      	<p>{{.Message}}</p>
+   		</div>
+      	<div class="row">
+	      	<div class="col s12">{{.Message}}</div>
+      	</div>
+{{with .Id.String | index $notes}}
+      	<div class="row">
+	      	<div class="col s12">{{.}}</div>
+      	</div>
+{{end}}
       </div>
     </li>
     <li>
