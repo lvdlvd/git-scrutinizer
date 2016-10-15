@@ -38,4 +38,5 @@ var tmplFuncs = template.FuncMap{
 	"gitlog":     gitLog,
 	"gitrefs":    gitRefNames,
 	"gitnotes":   gitNotes,
+	"gitconfig":  gitConfig,
 }
