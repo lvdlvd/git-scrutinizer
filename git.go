@@ -1,8 +1,12 @@
 package main
 
 import (
+	"bufio"
+	"bytes"
 	"fmt"
+	"net/textproto"
 	"path"
+	"time"
 
 	git "github.com/libgit2/git2go"
 )
@@ -115,7 +119,7 @@ func gitNotes() (map[string]string, error) {
 	return ss, nil
 }
 
-func gitNoteAppend(id *git.Oid, msg string) error {
+func gitNoteAppend(id *git.Oid, txt string) error {
 	head, err := repository.Head()
 	if err != nil {
 		return err
@@ -126,17 +130,30 @@ func gitNoteAppend(id *git.Oid, msg string) error {
 	}
 	ref := path.Join(*refpfx, branch)
 
-	note, err := repository.Notes.Read(ref, id)
-	if err == nil && note != nil {
-		msg = fmt.Sprintf("%s\n%s", note.Message(), msg)
-	}
-
 	sig, err := repository.DefaultSignature()
 	if err != nil {
 		return err
 	}
 
-	_, err = repository.Notes.Create(ref, sig, sig, id, msg, true)
+	var buf bytes.Buffer
+	w := bufio.NewWriter(&buf)
+	note, err := repository.Notes.Read(ref, id)
+	if err == nil && note != nil {
+		buf.WriteString(note.Message())
+		buf.WriteByte('\n')
+	}
+
+	msg := Message{
+		Header: textproto.MIMEHeader{
+			"Author": []string{fmt.Sprintf("%s <%s>", sig.Name, sig.Email)},
+			"Date":   []string{sig.When.Format(time.RFC3339)},
+		},
+		Body: txt,
+	}
+	msg.WriteTo(w)
+	w.Flush()
+
+	_, err = repository.Notes.Create(ref, sig, sig, id, buf.String(), true)
 	return err
 }
 

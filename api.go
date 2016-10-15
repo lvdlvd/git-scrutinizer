@@ -22,6 +22,7 @@ func postNote(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+
 	if err := gitNoteAppend(id, r.Form.Get("text")); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
