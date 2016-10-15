@@ -26,8 +26,8 @@ var tmplFuncs = template.FuncMap{
 		return false
 	},
 	"shortid": func(s string) string {
-		if len(s) > 6 {
-			return fmt.Sprintf("%s...", s[:6])
+		if len(s) > 7 {
+			return fmt.Sprintf("%s...", s[:7])
 		}
 		return s
 	},
