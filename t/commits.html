@@ -6,26 +6,7 @@
 
 {{$notes := gitnotes}}
 
-
-<ul class="collapsible" data-collapsible="expandable">
-{{range gitlog}}
- <li>
-      <div class="collapsible-header {{if eq .Id.String git.Head.Target.String}}active{{end}}">
-      	{{with .Author}}{{.Name}} &lt;{{.Email}}&gt  {{.When | timestamp}}{{end}} -- {{.Id.String | shortid}} {{.Summary}}
-      </div>
-      <div class="collapsible-body">
-      	<div class="row">
-      	<div class="col s12">
-  			<div class="card grey ligten-2">
-	            <div class="card-content">
-					<p>{{.Message}}</p>
-	            </div>
-			</div>
-		</div>
-		</div>
-
-{{with .Id.String | index $notes}}
-	{{range .}}
+		{{define "commentmsg"}}
 		<div class="row">
       	<div class="col s12">
       		<div class="card">
@@ -37,17 +18,37 @@
 
       		</div>
 	      	<div class="row">
-    	  		<div class="col s12 card-panel grey ligten-2"><pre>{{.Body}}</pre></div>
+    	  		<div class="col s12 card-panel grey lighten-3"><pre>{{.Body}}</pre></div>
       		</div>
 
       		</div>
-      		 <div class="card-action">
-              <a href="#">reply...</a>
-            </div>
+      		 <!-- div class="card-action"><a href="#">reply...</a></div -->
       		</div>
 
       	</div>
       	</div>
+      	{{end}}
+
+<ul class="collapsible" data-collapsible="expandable">
+{{range gitlog}}
+ <li>
+      <div class="collapsible-header {{if eq .Id.String git.Head.Target.String}}active{{end}}">
+      	{{with .Author}}{{.Name}} &lt;{{.Email}}&gt  {{.When | timestamp}}{{end}} -- {{.Id.String | shortid}} {{.Summary}}
+      </div>
+      <div class="collapsible-body">
+      	<div class="row">
+      	<div class="col s12">
+  			<div class="card grey lighten-1">
+	            <div class="card-content">
+					<p>{{.Message}}</p>
+	            </div>
+			</div>
+		</div>
+		</div>
+
+{{with .Id.String | index $notes}}
+	{{range .}}
+		{{template "commentmsg" .}}
   	{{end}}
 {{end}}
 

@@ -10,11 +10,23 @@
 
 <h1>{{$dir}} / {{$name}}</h1>
 
-<ul class="collapsible" data-collapsible="accordion">
+{{$notes := gitnotesforfile $dir $name}}
+
+{{with index $notes "FILE"}}
+{{range .}}file note:{{.}}<br>{{end}}
+{{end}}
+
+<ul class="collapsible" data-collapsible="expandable">
 {{range $i, $v := gitblob $.oid}}
 <li>
-	<div class="collapsible-header"><pre>{{$i |lineno}} {{$v}}</pre></div>
+{{$n := $i |lineno |printf "%d"| index $notes}}
+	<div class="collapsible-header {{if $n}}active{{end}}"><pre>{{$i |lineno}} {{$v}}</pre></div>
 	<div class="collapsible-body">
+
+	{{with $n}}
+	{{range .}}{{template "commentmsg" .}}{{end}}
+	{{end}}
+
 		 <form class="col s12">
 		    	<input type="hidden" name="commit" value="{{$head}}">
 		    	<input type="hidden" name="file" value="{{$dir}}/{{$name}}">

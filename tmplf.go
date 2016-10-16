@@ -47,5 +47,6 @@ var tmplFuncs = template.FuncMap{
 	"gitdiffflagstring": gitDiffFlagString,
 	"gittree":           gitTree,
 	"gitblob":           gitBlob,
-	"lineno":            func(i int) int { return i + 1 },
+	"lineno":            func(i int) int { return i + 1 }, // no math in templates
+	"gitnotesforfile":   gitNotesForFile,
 }

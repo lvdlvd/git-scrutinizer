@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"path"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -125,11 +126,44 @@ func gitNotes() (map[string][]*Message, error) {
 			if err != nil {
 				return nil, fmt.Errorf("Reading notes object %s: %v", noteid, err)
 			}
+			msg.Header.Set("Commit", annid.String()) // supply the commit oid as an extra header
 			ss[annid.String()] = append(ss[annid.String()], msg)
 		}
 
 	}
 	return ss, nil
+}
+
+// returned map is indexed on the line number (as a string)
+// line-less ones are indexed under "FILE"
+func gitNotesForFile(dir, name string) (map[string][]*Message, error) {
+	path := filepath.Join(dir, name)
+	if filepath.IsAbs(path) {
+		path = path[1:]
+	}
+	notes, err := gitNotes()
+	if err != nil {
+		return nil, err
+	}
+	r := map[string][]*Message{}
+	for _, msgs := range notes {
+		for _, msg := range msgs {
+			if p := msg.Header.Get("File"); p != "" {
+				if filepath.IsAbs(p) {
+					p = p[1:]
+				}
+				if p != path {
+					continue
+				}
+				ln := msg.Header.Get("Line")
+				if ln == "" {
+					ln = "FILE"
+				}
+				r[ln] = append(r[ln], msg)
+			}
+		}
+	}
+	return r, nil
 }
 
 func gitNoteAppend(id *git.Oid, msg *Message) error {
