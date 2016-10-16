@@ -21,3 +21,12 @@ Line: 3
 
 now with nicer header keys
 .
+
+Author: Luuk van Dijk <lvd@gmail.com>
+Commit: d0af447d71d95b78f4d057b66a9cb4b70933b9b6
+Date: 2016-10-16T19:24:24+02:00
+File: s/api.js
+Line: 5
+
+lalalala
+.
