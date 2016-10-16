@@ -39,7 +39,7 @@ func postNote(w http.ResponseWriter, r *http.Request) {
 	}
 
 	for k, v := range r.Form {
-		if k == "text" {
+		if k == "text" || k == "commit" {
 			continue
 		}
 		msg.Header[textproto.CanonicalMIMEHeaderKey(k)] = v

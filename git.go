@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
+	"io"
 	"path"
 	"strings"
 	"time"
@@ -81,7 +82,7 @@ func gitRefNames() ([]string, error) {
 	return ss, nil
 }
 
-func gitNotes() (map[string]string, error) {
+func gitNotes() (map[string][]*Message, error) {
 	head, err := repository.Head()
 	if err != nil {
 		return nil, err
@@ -97,7 +98,7 @@ func gitNotes() (map[string]string, error) {
 	if err != nil {
 		return nil, err
 	}
-	ss := map[string]string{}
+	ss := map[string][]*Message{}
 	for {
 		noteid, annid, err := it.Next()
 		if ge, ok := err.(*git.GitError); ok && ge.Code == git.ErrIterOver {
@@ -114,7 +115,19 @@ func gitNotes() (map[string]string, error) {
 		if err != nil {
 			return ss, err
 		}
-		ss[annid.String()] = string(b.Contents())
+
+		r := bufio.NewReader(bytes.NewBuffer(b.Contents()))
+		for {
+			msg, err := ReadMessage(r)
+			if err == io.EOF {
+				break
+			}
+			if err != nil {
+				return nil, fmt.Errorf("Reading notes object %s: %v", noteid, err)
+			}
+			ss[annid.String()] = append(ss[annid.String()], msg)
+		}
+
 	}
 	return ss, nil
 }
@@ -140,7 +153,6 @@ func gitNoteAppend(id *git.Oid, msg *Message) error {
 	note, err := repository.Notes.Read(ref, id)
 	if err == nil && note != nil {
 		buf.WriteString(note.Message())
-		buf.WriteByte('\n')
 	}
 
 	msg.Header.Set("Author", fmt.Sprintf("%s <%s>", sig.Name, sig.Email))

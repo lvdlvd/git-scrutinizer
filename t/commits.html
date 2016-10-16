@@ -10,23 +10,49 @@
 <ul class="collapsible" data-collapsible="expandable">
 {{range gitlog}}
  <li>
-      <div class="collapsible-header {{if eq .Id.String git.Head.Target.String}}active{{end}}">{{.Id.String | shortid}} {{.Summary}}</div>
+      <div class="collapsible-header {{if eq .Id.String git.Head.Target.String}}active{{end}}">
+      	{{with .Author}}{{.Name}} &lt;{{.Email}}&gt  {{.When | timestamp}}{{end}} -- {{.Id.String | shortid}} {{.Summary}}
+      </div>
       <div class="collapsible-body">
       	<div class="row">
-      		<div class="col s1">Author</div> {{template "sig" .Author}}
-      	</div>
-      	<div class="row">
-   			<div class="col s1">Committer</div> {{template "sig" .Committer}}
-   		</div>
-      	<div class="row">
-	      	<div class="col s12">{{.Message}}</div>
-      	</div>
+      	<div class="col s12">
+  			<div class="card grey ligten-2">
+	            <div class="card-content">
+					<p>{{.Message}}</p>
+	            </div>
+			</div>
+		</div>
+		</div>
+
 {{with .Id.String | index $notes}}
-      	<div class="row">
-	      	<div class="col s12"><pre>{{.}}</pre></div>
+	{{range .}}
+		<div class="row">
+      	<div class="col s12">
+      		<div class="card">
+      		<div class="card-content">
+
+	      	<div class="row">
+      			<div class="col s4">{{if .Header.File}}{{index .Header.File 0}} {{if .Header.Line}}:{{index .Header.Line 0}}{{end}}{{end}}</div>      			
+    	  		<div class="col s4">{{index .Header.Author 0}} {{(index .Header.Date 0)}}</div>
+
+      		</div>
+	      	<div class="row">
+    	  		<div class="col s12 card-panel grey ligten-2"><pre>{{.Body}}</pre></div>
+      		</div>
+
+      		</div>
+      		 <div class="card-action">
+              <a href="#">reply...</a>
+            </div>
+      		</div>
+
       	</div>
+      	</div>
+  	{{end}}
 {{end}}
+
 {{if eq .Id.String git.Head.Target.String}}
+		<!-- only for the head commit  -->
 		<div class="row">
 		    <form class="col s12">
 		    	<input type="hidden" name="commit" value="{{.Id}}">
@@ -34,7 +60,7 @@
 					<div class="input-field col s12">
 						<i class="material-icons prefix">mode_edit</i>
 						<textarea id="textarea1" name="text" class="materialize-textarea"></textarea>
-						<label for="textarea1">New Comment</label>
+						<label for="textarea1">New commit-level comment</label>
 					</div>
 				</div>
 				<div class="row">
@@ -52,10 +78,7 @@
 <li>
 {{end}}
 </ul>
-{{define "sig"}}
-	<div class="col s2">{{.Name}} &lt;{{.Email}}&gt</div>
-	<div class="col s2">{{.When | timestamp}}</div>
-{{end}}
+
 
 <script>
 $(document).ready(function() {
