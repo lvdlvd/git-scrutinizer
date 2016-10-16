@@ -1,16 +1,63 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
 <html>
-{{template "stdhead" ($.path | trimprefix "/")}}
+{{template "stdhead" ($.name)}}
 <body>
 {{template "navbar" $}}
 
-<table>
-<tbody>
-	{{range $i, $v := gitblob $.oid}}
-<tr><td>{{$i |lineno}}</td><td><pre>{{$v}}</pre></tr>
-	{{end}}
-</tbody>
-</table>
+{{$head := git.Head.Target}}
+{{$dir := (index $.dir 0)}}
+{{$name := (index $.name 0)}}
+
+<h1>{{$dir}} / {{$name}}</h1>
+
+<ul class="collapsible" data-collapsible="accordion">
+{{range $i, $v := gitblob $.oid}}
+<li>
+	<div class="collapsible-header"><pre>{{$i |lineno}} {{$v}}</pre></div>
+	<div class="collapsible-body">
+		 <form class="col s12">
+		    	<input type="hidden" name="commit" value="{{$head}}">
+		    	<input type="hidden" name="file" value="{{$dir}}/{{$name}}">
+		    	<input type="hidden" name="line" value="{{$i |lineno}}">
+				<div class="row">
+					<div class="input-field col s12">
+						<i class="material-icons prefix">mode_edit</i>
+						<textarea id="textarea1" name="text" class="materialize-textarea"></textarea>
+						<label for="textarea1">New Comment</label>
+					</div>
+				</div>
+				<div class="row">
+					<div class="input-field col s2">
+					<button class="btn waves-effect waves-light" type="submit">Submit<i class="material-icons right">send</i>
+					</button>
+					</div>
+				</div>
+			</form>
+	</div>
+</li>
+{{end}}
+</ul>
+
+
+<script>
+$(document).ready(function() {
+    $("form").submit(function(ev){
+        ev.preventDefault();
+        var data = $(this).serializeArray().reduce(function(obj, item) {
+		    obj[item.name] = item.value;
+    		return obj;
+		}, {});
+        $.ajax({
+			type:    'POST',
+			url:     '/api/v1/commits/' + data['commit'] + '/notes',
+			//data:    data['text'],
+			data:    $(this).serializeArray(),
+			success: function(res, status, xhr) { location.reload(); },
+			error:   function(xhr, status, err) { Materialize.toast(xhr.responseText, 4000); }
+        });
+    });
+});
+</script>
 
 </body>
 </html>

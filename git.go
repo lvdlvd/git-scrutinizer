@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
-	"net/textproto"
 	"path"
 	"strings"
 	"time"
@@ -120,7 +119,7 @@ func gitNotes() (map[string]string, error) {
 	return ss, nil
 }
 
-func gitNoteAppend(id *git.Oid, txt string) error {
+func gitNoteAppend(id *git.Oid, msg *Message) error {
 	head, err := repository.Head()
 	if err != nil {
 		return err
@@ -144,13 +143,8 @@ func gitNoteAppend(id *git.Oid, txt string) error {
 		buf.WriteByte('\n')
 	}
 
-	msg := Message{
-		Header: textproto.MIMEHeader{
-			"Author": []string{fmt.Sprintf("%s <%s>", sig.Name, sig.Email)},
-			"Date":   []string{sig.When.Format(time.RFC3339)},
-		},
-		Body: txt,
-	}
+	msg.Header.Set("Author", fmt.Sprintf("%s <%s>", sig.Name, sig.Email))
+	msg.Header.Set("Date", sig.When.Format(time.RFC3339))
 	msg.WriteTo(w)
 	w.Flush()
 
