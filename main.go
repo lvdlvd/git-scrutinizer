@@ -89,7 +89,8 @@ func main() {
 	})
 
 	r.Path("/commits").Handler(substPath("commits.html", th))
-	r.Path("/tree").Handler(substPath("tree.html", th))
+	r.PathPrefix("/tree/").Handler(substPath("tree.html", th))
+	r.Path("/blob/{oid}").Handler(substPath("blob.html", th))
 	r.Path("/diffs").Handler(substPath("diffs.html", th))
 	r.Path("/settings").Handler(substPath("settings.html", th))
 

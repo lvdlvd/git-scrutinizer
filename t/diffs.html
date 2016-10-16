@@ -5,9 +5,13 @@
 {{template "navbar" $}}
 {{range gitdiffs (gitbranchlocal "master").Target git.Head.Target}}
 <pre>
-{{. | printf "%#v"}}
+Status:{{.Status |gitdeltastring}}  Flags: {{.Flags |gitdiffflagstring}} Similarity: {{.Similarity}}
+Old: {{template "difffile" .OldFile}}
+New: {{template "difffile" .NewFile}}
+
 </pre>
 {{end}}
 
+{{define "difffile"}} {{.Oid}} {{printf "%06o" .Mode}} {{.Path}} [{{.Size}}] {{.Flags |gitdiffflagstring}} {{end}}
 </body>
 </html>

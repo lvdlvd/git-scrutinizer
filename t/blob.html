@@ -1,0 +1,16 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html>
+{{template "stdhead" ($.path | trimprefix "/")}}
+<body>
+{{template "navbar" $}}
+
+<table>
+<tbody>
+	{{range $i, $v := gitblob $.oid}}
+<tr><td>{{$i |lineno}}</td><td><pre>{{$v}}</pre></tr>
+	{{end}}
+</tbody>
+</table>
+
+</body>
+</html>

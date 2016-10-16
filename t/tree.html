@@ -1,7 +1,21 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
 <html>
-{{template "stdhead" ($.path | trimprefix "/" | titlecase)}}
+{{template "stdhead" ($.path | trimprefix "/")}}
 <body>
 {{template "navbar" $}}
+
+{{$dir := ($.path | trimprefix "/tree/")}}
+
+
+{{range ($.path | trimprefix "/tree/" | gittree)}}
+{{if eq .Type.String "Blob"}}
+<a href="/blob/{{.Id}}?dir={{$dir}}&name={{.Name}}">{{.Name}}</a><br>
+{{else if eq .Type.String "Tree"}}
+<a href="/tree/{{$dir}}/{{.Name}}">{{.Name}}/</a><br>
+{{else}}
+<pre>{{.}}</pre>
+{{end}}
+{{end}}
+
 </body>
 </html>

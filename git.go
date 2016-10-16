@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/textproto"
 	"path"
+	"strings"
 	"time"
 
 	git "github.com/libgit2/git2go"
@@ -196,4 +197,144 @@ func gitDiffs(ocid, ncid *git.Oid) ([]*git.DiffDelta, error) {
 		r = append(r, &dd)
 	}
 	return r, nil
+}
+
+func gitPatches(ocid, ncid *git.Oid) ([]string, error) {
+	oc, err := repository.LookupCommit(ocid)
+	if err != nil {
+		return nil, err
+	}
+	otree, err := oc.Tree()
+	if err != nil {
+		return nil, err
+	}
+
+	nc, err := repository.LookupCommit(ncid)
+	if err != nil {
+		return nil, err
+	}
+	ntree, err := nc.Tree()
+	if err != nil {
+		return nil, err
+	}
+	opts, err := git.DefaultDiffOptions()
+	if err != nil {
+		return nil, err
+	}
+	diff, err := repository.DiffTreeToTree(otree, ntree, &opts)
+	if err != nil {
+		return nil, err
+	}
+	N, err := diff.NumDeltas()
+	if err != nil {
+		return nil, err
+	}
+	var r []string
+	for i := 0; i < N; i++ {
+		dd, err := diff.Patch(i)
+		if err != nil {
+			return nil, err
+		}
+		s, err := dd.String()
+		if err != nil {
+			return nil, err
+		}
+		r = append(r, s)
+	}
+	return r, nil
+}
+
+func gitDeltaString(d git.Delta) string {
+	switch d {
+	case git.DeltaUnmodified:
+		return "Unmodified"
+	case git.DeltaAdded:
+		return "Added"
+	case git.DeltaDeleted:
+		return "Deleted"
+	case git.DeltaModified:
+		return "Modified"
+	case git.DeltaRenamed:
+		return "Renamed"
+	case git.DeltaCopied:
+		return "Copied"
+	case git.DeltaIgnored:
+		return "Ignored"
+	case git.DeltaUntracked:
+		return "Untracked"
+	case git.DeltaTypeChange:
+		return "TypeChange"
+	}
+	return fmt.Sprintf("Delta[%d]", int(d))
+}
+
+func gitDiffFlagString(d git.DiffFlag) string {
+	var f []string
+	if d&git.DiffFlagBinary != 0 {
+		f = append(f, "binary")
+	}
+	if d&git.DiffFlagNotBinary != 0 {
+		f = append(f, "text")
+	}
+	if d&git.DiffFlagValidOid != 0 {
+		f = append(f, "valid")
+	}
+	return strings.Join(f, ",")
+}
+
+func gitTree(path string) ([]*git.TreeEntry, error) {
+	head, err := repository.Head()
+	if err != nil {
+		return nil, err
+	}
+	c, err := repository.LookupCommit(head.Target())
+	if err != nil {
+		return nil, err
+	}
+	tree, err := c.Tree()
+	if err != nil {
+		return nil, err
+	}
+	if path != "" {
+		entry, err := tree.EntryByPath(path)
+		if err != nil {
+			return nil, err
+		}
+		if entry.Type != git.ObjectTree {
+			return nil, fmt.Errorf("not a tree: %q", path)
+		}
+		tree, err = repository.LookupTree(entry.Id)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	var r []*git.TreeEntry
+	for i, e := uint64(0), tree.EntryCount(); i < e; i++ {
+		r = append(r, tree.EntryByIndex(i))
+	}
+	return r, nil
+}
+
+func gitBlob(oid string) (<-chan string, error) {
+	id, err := git.NewOid(oid)
+	if err != nil {
+		return nil, err
+	}
+	blob, err := repository.LookupBlob(id)
+	if err != nil {
+		return nil, err
+	}
+	r := bufio.NewScanner(bytes.NewReader(blob.Contents()))
+	ch := make(chan string)
+	go func() {
+		defer close(ch)
+		for r.Scan() {
+			ch <- r.Text()
+		}
+		if err := r.Err(); err != nil {
+			ch <- fmt.Sprintf("Error scanning %s: %v", oid, err)
+		}
+	}()
+	return ch, nil
 }
