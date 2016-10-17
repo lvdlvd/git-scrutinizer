@@ -5,7 +5,7 @@ THIS IS AT THE CRUDE PROTOTYPE THROWN TOGETHER IN A FEW HOLIDAY HOURS STAGE
 
 Git scrutinizer allows collaborators to add comments per file:line on the differences between master..HEAD in the repository in which it is started.
 
-Unlike other things out there it runs locally (although it opens a browser locally for the UI) and stores the review threads as structured text messages in git notes instead of in a separate database.
+Unlike other things out there it runs locally (it opens a browser to a localhost:port for the UI) and stores the review threads as structured text messages in git notes instead of in a separate database.
 
 This means it re-uses the authentication, authorisation, communication and storage facilities git already provides and avoids installation struggles.
 
