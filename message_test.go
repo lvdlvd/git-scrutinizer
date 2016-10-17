@@ -11,7 +11,7 @@ import (
 func TestMessageWrite(t *testing.T) {
 
 	msg := Message{Header: textproto.MIMEHeader{}}
-	msg.Header.Add("Author", "Luuk van Dijk <lvd@daedalean.ai>")
+	msg.Header.Add("Author", "Luuk van Dijk <lvd@example.ai>")
 	msg.Header.Add("Status", "resolved")
 	msg.Body = `This is the body
 of the message it has
