@@ -14,6 +14,7 @@ The only non-go dependency is libgit2 (through the git2go module).
 INSTALLATION
 - install libgit2 through whatever native means your platform uses
 - go get -u github.com/lvdlvd/git-scrutinizer
+test by running 'git scrutinizer'
 
 TODO:
 - ui sucks, rethink
