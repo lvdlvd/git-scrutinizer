@@ -31,6 +31,15 @@ var binHome string
 func findHome() string {
 	if binHome == "" {
 		binHome = filepath.Dir(os.Args[0])
+		if binHome == "." || binHome == "" {
+			for _, v := range filepath.SplitList(os.Getenv("PATH")) {
+				if _, err := os.Stat(filepath.Join(v, os.Args[0])); err == nil {
+					binHome = v
+					break
+				}
+			}
+
+		}
 		// if we're running from a GOPATH/bin, home is src/github/lvdlvd/git-scrutinizer
 		for _, v := range filepath.SplitList(os.Getenv("GOPATH")) {
 			if binHome == filepath.Join(v, "bin") {
@@ -54,6 +63,10 @@ func main() {
 	log.SetFlags(0)
 	flag.Usage = usage
 	flag.Parse()
+
+	if _, err := os.Stat(*webroot); err != nil {
+		log.Fatalf("%q can't find %s, probably mis-inferred %s as where i'm run from.", os.Args[0], *webroot, binHome)
+	}
 
 	var (
 		repo string
