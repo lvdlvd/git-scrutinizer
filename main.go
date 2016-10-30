@@ -24,6 +24,7 @@ var (
 	refpfx   = flag.String("ref", "refs/notes/scrutinize", "Notes ref prefix to store review messages on.")
 	webroot  = flag.String("webroot", filepath.Join(findHome(), "s"), "Path to dir with static webpages.")
 	tmplroot = flag.String("tmplroot", filepath.Join(findHome(), "t"), "Path to dir with template webpages.")
+	baseline = flag.String("baseline", "refs/heads/master", ".git/refs path of branch to compare to.")
 )
 
 var binHome string

@@ -3,7 +3,7 @@
 {{template "stdhead" ($.path | trimprefix "/" | titlecase)}}
 <body>
 {{template "navbar" $}}
-{{range gitdiffs (gitbranchlocal "master").Target git.Head.Target}}
+{{range gitdiffs}}
 <pre>
 Status:{{.Status |gitdeltastring}}  Flags: {{.Flags |gitdiffflagstring}} Similarity: {{.Similarity}}
 Old: {{template "difffile" .OldFile}}

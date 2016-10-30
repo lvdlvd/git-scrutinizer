@@ -48,7 +48,7 @@ func gitLog() ([]*git.Commit, error) {
 	if err := w.PushHead(); err != nil {
 		return nil, err
 	}
-	if err := w.HideRef("refs/heads/master"); err != nil {
+	if err := w.HideRef(*baseline); err != nil {
 		return nil, err
 	}
 
@@ -198,8 +198,13 @@ func gitNoteAppend(id *git.Oid, msg *Message) error {
 	return err
 }
 
-func gitDiffs(ocid, ncid *git.Oid) ([]*git.DiffDelta, error) {
-	oc, err := repository.LookupCommit(ocid)
+func gitDiffs() ([]*git.DiffDelta, error) {
+	master, err := repository.References.Lookup(*baseline)
+	if err != nil {
+		return nil, err
+	}
+
+	oc, err := repository.LookupCommit(master.Target())
 	if err != nil {
 		return nil, err
 	}
@@ -208,7 +213,12 @@ func gitDiffs(ocid, ncid *git.Oid) ([]*git.DiffDelta, error) {
 		return nil, err
 	}
 
-	nc, err := repository.LookupCommit(ncid)
+	head, err := repository.Head()
+	if err != nil {
+		return nil, err
+	}
+
+	nc, err := repository.LookupCommit(head.Target())
 	if err != nil {
 		return nil, err
 	}
