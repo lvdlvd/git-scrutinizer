@@ -7,12 +7,67 @@ nav ul li.active {
  	background-color: #f2b632;
 }
 
+
+
 .collapsible-header {
-	color: #FFF;
- 	background-color: #677077;
+	/*color: #FFF;
+ 	background-color: #677077;*/
+}
+
+.commits-page-wrapper{
+	padding: 24px;
+	background: #efefef;
+}
+.commit-message{
+	background-color: #d0d;
+}
+.commit-message .title,
+.comment .title {
+	font-size: 12px !important;
+}
+.commit-message .timestamp,
+.comment .timestamp {
+	color: #7ED321;
+	margin-left: 8px;
+}
+.commit-message .badge,
+.comment .badge {
+	white-space: nowrap;
+}
+.commit-message .text,
+.comment .text {
+	padding:0px;
 }
 
 .collapsible-body .collapsible-header {
 	color: #FFF;
  	background-color: #b5b5b7;
 }
+
+.comment.collection-item.avatar,
+.commit-message.collection-item.avatar
+{
+	min-height: 64px;
+
+}
+
+.commit-message.collection-item.avatar .secondary-content{
+	display:flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	align-items:center;
+}
+
+.comment.collection .secondary-content .replies-counter{
+	line-height:normal;
+	color:#b5b5b7;
+
+}
+.comment-response.row{
+	padding:0px;
+}
+
+.commit-thread.collection{
+ margin-left: 64px;
+}
+

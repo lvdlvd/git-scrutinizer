@@ -4,16 +4,29 @@
 <body>
 {{template "navbar" $}}
 
+<div class="commits-page-wrapper">
+
 {{$notes := gitnotes}}
 
 		{{define "commentmsg"}}
-		<div class="row">
-      	<div class="col s12">
-      		<div class="card">
-      		<div class="card-content">
 
-	      	<div class="row">
-      			<div class="col s4">{{if .Header.File}}{{index .Header.File 0}} {{if .Header.Line}}:{{index .Header.Line 0}}{{end}}{{end}}</div>      			
+				<li class="comment comment-wrapper collection-item avatar">
+					<i class="material-icons circle green">person</i><!-- TODO: get photo of person  then we can use <img src="images/img.jpg" alt="" class="circle"> if there is one. Otherwise assign a color to each user? -->
+					<span class="title ">{{.Header.Author}}<span class="timestamp">{{.Header.Date}}</span> </span> <!-- TODO: format timestamp to some relative standard - if not too much hassle. ie Just now, 2 hours ago, yesterday, last week..-->
+					<p class="text">{{.Body}}The comment text goes here but this is hard-coded<br/></p><!-- TODO: for some reason the {{.Body}} in my test case was empty (despite filling in a value.. please check.. -->
+
+					<div class="secondary-content">
+						<a class="waves-effect waves-light btn-flat">
+							<i class="material-icons left">reply</i> <!--TODO: trigger reply thingy.. tbd -->
+							reply</a>
+					</div>
+				</li>
+
+
+	      	<!--<div class="row">
+
+
+      			<div class="col s4">{{if .Header.File}}{{index .Header.File 0}} {{if .Header.Line}}:{{index .Header.Line 0}}{{end}}{{end}}</div>
     	  		<div class="col s4">{{index .Header.Author 0}} {{(index .Header.Date 0)}}</div>
 
       		</div>
@@ -21,47 +34,50 @@
     	  		<div class="col s12 card-panel grey lighten-3"><pre>{{.Body}}</pre></div>
       		</div>
 
-      		</div>
+      		</div>-->
       		 <!-- div class="card-action"><a href="#">reply...</a></div -->
-      		</div>
 
-      	</div>
-      	</div>
       	{{end}}
-
-<ul class="collapsible" data-collapsible="expandable">
+<div class="commit-card card">
+<ul class="collapsible collection with-header" data-collapsible="expandable">
+	<li class="collection-header"><h4>Commits</h4></li>
 {{range gitlog}}
  <li>
       <div class="collapsible-header {{if eq .Id.String git.Head.Target.String}}active{{end}}">
-      	{{with .Author}}{{.Name}} &lt;{{.Email}}&gt  {{.When | timestamp}}{{end}} -- {{.Id.String | shortid}} {{.Summary}}
+
+          <ul class="collection">
+              <li class="commit-message collection-item avatar">
+                  <i class="material-icons circle">lens</i>
+                  <span class="title ">{{.Author.Name}}<span class="timestamp">{{.Author.When}}</span> </span> <!-- TODO: format timestamp to some relative standard - if not too much hassle. ie Just now, 2 hours ago, yesterday, last week..-->
+                  <p class="text">{{.Message}}<br>
+                  </p>
+                  <div class="secondary-content">
+					  <span class="replies-counter">4 comments</span><!-- TODO: insert amount of replies here leave blank if none-->
+					  <i class="material-icons right">expand_more</i> <!-- TODO: add logic to change icon to expand_less when expanded-->
+				  </div>
+              </li>
+          </ul>
+
       </div>
       <div class="collapsible-body">
-      	<div class="row">
-      	<div class="col s12">
-  			<div class="card grey lighten-1">
-	            <div class="card-content">
-					<p>{{.Message}}</p>
-	            </div>
-			</div>
-		</div>
-		</div>
-
+		  <ul class="commit-thread collection">
 {{with .Id.String | index $notes}}
 	{{range .}}
+
 		{{template "commentmsg" .}}
   	{{end}}
 {{end}}
 
+
 {{if eq .Id.String git.Head.Target.String}}
 		<!-- only for the head commit  -->
-		<div class="row">
-		    <form class="col s12">
+		<li class="collection-item">
+			<form class="">
 		    	<input type="hidden" name="commit" value="{{.Id}}">
-				<div class="row">
-					<div class="input-field col s12">
-						<i class="material-icons prefix">mode_edit</i>
-						<textarea id="textarea1" name="text" class="materialize-textarea"></textarea>
-						<label for="textarea1">New commit-level comment</label>
+				<div class="comment-response">
+					<div class="input-field col s6">
+						<input id="textarea1" type="text" class="validate">
+						<label for="textarea1">Comment on this commit</label>
 					</div>
 				</div>
 				<div class="row">
@@ -71,15 +87,18 @@
 					</div>
 				</div>
 			</form>
-		</div>
+		</li>
+			  </ul>
       </div>
+
 {{end}}
     </li>
     <li>
 <li>
 {{end}}
 </ul>
-
+</div>
+</div>
 
 <script>
 $(document).ready(function() {
@@ -100,5 +119,6 @@ $(document).ready(function() {
     });
 });
 </script>
+
 </body>
 </html>
