@@ -1,0 +1,45 @@
+.tree-page-wrapper{
+	padding: 0px;
+	background: #efefef;
+	padding-left: 300px;
+	height: calc(100% - 64px);
+}
+
+.tree-page-wrapper .collection-header{
+	padding-left:10px !important;
+}
+
+.tree-page-wrapper .side-nav.fixed.in-page{
+	top: 64px;
+}
+.file-tree-wrapper{
+	min-width:300px;
+}
+
+.file-detail-wrapper {
+	height: 100%;
+	padding:24px;
+}
+
+.file-list-item a.name,
+.folder-list-item .name{
+	color:#999;
+	font-weight: normal;
+}
+
+.file-list-item a.name.changed,
+.folder-list-item .name.changed{
+	color:#4A90E2;
+}
+
+.folder-list-item.collection-item {
+	font-weight: bold;
+
+}
+
+
+/** Detail view **/
+
+.file-view{
+
+}

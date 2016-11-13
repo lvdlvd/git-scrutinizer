@@ -3,19 +3,51 @@
 {{template "stdhead" ($.path | trimprefix "/")}}
 <body>
 {{template "navbar" $}}
+<div class="tree-page-wrapper">
+    <div id="slide-out" class="side-nav fixed in-page file-tree-wrapper">
 
-{{$dir := ($.path | trimprefix "/tree/")}}
+
+        <ul class="collapsible collection with-header" data-collapsible="expandable">
+            <li class="collection-header">
+                <h4>Tree</h4>
+            </li>
+            {{$dir := ($.path | trimprefix "/tree/")}}
 
 
-{{range ($.path | trimprefix "/tree/" | gittree)}}
-{{if eq .Type.String "Blob"}}
-<a href="/blob/{{.Id}}?dir={{$dir}}&name={{.Name}}">{{.Name}}</a><br>
-{{else if eq .Type.String "Tree"}}
-<a href="/tree/{{$dir}}/{{.Name}}">{{.Name}}/</a><br>
-{{else}}
-<pre>{{.}}</pre>
-{{end}}
-{{end}}
+            {{range ($.path | trimprefix "/tree/" | gittree)}}
+            {{if eq .Type.String "Blob"}}
 
+            <li class="collection-item file-list-item">
+                <a class="name changed" href="/blob/{{.Id}}?dir={{$dir}}&name={{.Name}}">{{.Name}}</a><!-- TODO: Set class name changed for files that were changed in the branch -->
+                </li>
+
+            {{else if eq .Type.String "Tree"}}
+            <li class="folder-list-item">
+                <div class="collapsible-header name">{{.Name}}
+                    <i class="material-icons">folder</i>
+                    <a href="#!" class="secondary-content">
+                        <i class="material-icons">expand_more</i>
+                    </a>
+                </div>
+
+                <div class="collapsible-body"><p>Lorem ipsum dolor sit amet.<!-- TODO: Inject sub directory file / folder  list here --></p></div>
+                <!--<a href="/tree/{{$dir}}/{{.Name}}">{{.Name}}/</a><br>-->
+            </li>
+            {{else}}
+            <pre>{{.}}</pre>
+            {{end}}
+            {{end}}
+        </ul>
+    </div>
+    <div class="file-detail-wrapper">
+        <div class="file-view card white">
+            <div class="card-content black-text">
+                <span class="card-title">File name</span>
+                <p>file view<!-- TODO: Inject file blob here --></p>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
 </html>
+
