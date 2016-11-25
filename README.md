@@ -16,9 +16,20 @@ INSTALLATION
 - go get -u github.com/lvdlvd/git-scrutinizer
 test by running 'git scrutinizer'
 
+
+Sync notes with
+
+`git push origin refs/notes/scrutinize/*`
+
+And
+
+`git fetch origin refs/notes/scrutinize/*:refs/notes/scrutinize/*`  
+
+
+
 TODO:
 - ui sucks, rethink
 - currently can only review master..HEAD
-- automate git push origin refs/notes/scrutinize/...  and  git fetch origin refs/notes/scrutinize/*:refs/notes/scrutinize/...
+- automate push/fetch comment notes
 - reply-to messages
 - better diff and tree viewers
